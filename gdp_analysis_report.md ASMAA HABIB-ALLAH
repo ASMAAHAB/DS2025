@@ -1,0 +1,633 @@
+# Rapport d'Analyse Approfondie du PIB : Comparaison Internationale
+
+---
+
+## 1. Introduction et Contexte
+
+### 1.1 Objectif de l'analyse
+
+Cette analyse vise à comparer la performance économique de plusieurs pays à travers l'étude de leur Produit Intérieur Brut (PIB). L'objectif est d'identifier les tendances de croissance, les disparités économiques et les dynamiques macroéconomiques sur une période de 10 ans (2013-2022).
+
+### 1.2 Méthodologie générale employée
+
+L'analyse suit une approche quantitative basée sur :
+- L'analyse statistique descriptive des données du PIB
+- La comparaison inter-pays sur plusieurs indicateurs
+- L'étude de l'évolution temporelle et des taux de croissance
+- La visualisation graphique pour faciliter l'interprétation
+
+### 1.3 Pays sélectionnés et période d'analyse
+
+**Pays analysés :**
+- États-Unis (économie développée, première puissance mondiale)
+- Chine (économie émergente en forte croissance)
+- Allemagne (première économie européenne)
+- Japon (économie développée asiatique)
+- France (économie développée européenne)
+- Inde (économie émergente à fort potentiel)
+
+**Période d'analyse :** 2013-2022 (10 ans)
+
+### 1.4 Questions de recherche principales
+
+1. Quelle est l'évolution du PIB de chaque pays sur la période étudiée ?
+2. Quels pays affichent les taux de croissance les plus élevés ?
+3. Comment se compare le PIB par habitant entre pays développés et émergents ?
+4. Existe-t-il des corrélations entre les performances économiques des différents pays ?
+
+---
+
+## 2. Collecte et Préparation des Données
+
+### 2.1 Source des données
+
+**Source principale :** Banque mondiale (World Bank Open Data)
+- Base de données : World Development Indicators (WDI)
+- Accès : https://data.worldbank.org/
+
+**Sources complémentaires :**
+- Fonds Monétaire International (FMI) - World Economic Outlook
+- OCDE - Base de données statistiques
+
+### 2.2 Variables analysées
+
+| Variable | Description | Unité |
+|----------|-------------|-------|
+| PIB nominal | Produit Intérieur Brut à prix courants | Milliards USD |
+| PIB par habitant | PIB divisé par la population | USD par personne |
+| Taux de croissance | Variation annuelle du PIB réel | Pourcentage (%) |
+| PIB (PPA) | PIB ajusté en parité de pouvoir d'achat | Milliards USD internationaux |
+
+### 2.3 Période couverte
+
+- **Début :** 2013
+- **Fin :** 2022
+- **Fréquence :** Données annuelles
+- **Total :** 10 années d'observations
+
+### 2.4 Qualité et limitations des données
+
+**Points forts :**
+- Données officielles validées par des organismes internationaux
+- Méthodologie standardisée permettant les comparaisons inter-pays
+- Couverture temporelle complète
+
+**Limitations :**
+- Données 2022 parfois provisoires ou estimées
+- Les révisions statistiques peuvent modifier rétroactivement les chiffres
+- Les différences méthodologiques nationales peuvent persister malgré la standardisation
+- Impact de la pandémie COVID-19 (2020-2021) sur la comparabilité
+
+### 2.5 Tableau récapitulatif des données
+
+| Pays | PIB 2013 (Mds USD) | PIB 2022 (Mds USD) | Variation | PIB/hab 2022 (USD) |
+|------|-------------------:|-------------------:|----------:|-------------------:|
+| États-Unis | 16,843 | 25,462 | +51.2% | 76,399 |
+| Chine | 9,607 | 17,963 | +87.0% | 12,720 |
+| Allemagne | 3,753 | 4,072 | +8.5% | 48,756 |
+| Japon | 5,212 | 4,231 | -18.8% | 33,815 |
+| France | 2,810 | 2,778 | -1.1% | 40,886 |
+| Inde | 1,857 | 3,385 | +82.3% | 2,389 |
+
+*Note : Les variations négatives pour le Japon et la France reflètent principalement les fluctuations du taux de change USD.*
+
+---
+
+## 3. Code d'Analyse - Implémentation Python
+
+### 3.1 Introduction au code
+
+Cette section présente le code Python complet pour réaliser l'analyse du PIB. Chaque bloc est commenté et expliqué pour assurer la reproductibilité et la compréhension.
+
+### 3.2 Installation et importation des bibliothèques
+
+**Explication :** Nous commençons par importer toutes les bibliothèques nécessaires à l'analyse de données et à la visualisation.
+
+```python
+# Importation des bibliothèques pour la manipulation de données
+import pandas as pd  # Pour la manipulation et l'analyse de données tabulaires
+import numpy as np   # Pour les calculs numériques et les opérations mathématiques
+
+# Importation des bibliothèques pour la visualisation
+import matplotlib.pyplot as plt  # Bibliothèque principale pour créer des graphiques
+import seaborn as sns            # Pour des visualisations statistiques plus élégantes
+
+# Configuration de l'affichage des graphiques
+plt.style.use('seaborn-v0_8-darkgrid')  # Style professionnel pour les graphiques
+sns.set_palette("husl")                  # Palette de couleurs harmonieuse
+
+# Configuration pour afficher tous les chiffres sans notation scientifique
+pd.options.display.float_format = '{:,.2f}'.format
+
+# Paramètres de qualité pour les graphiques
+plt.rcParams['figure.figsize'] = (12, 6)  # Taille par défaut des graphiques
+plt.rcParams['figure.dpi'] = 100           # Résolution des graphiques
+plt.rcParams['font.size'] = 10             # Taille de police
+
+# Afficher un message de confirmation
+print("✓ Bibliothèques importées avec succès")
+```
+
+**Résultat attendu :** Toutes les bibliothèques sont chargées et prêtes à l'emploi.
+
+---
+
+### 3.3 Création du jeu de données
+
+**Explication :** Nous créons un DataFrame avec les données du PIB pour les 6 pays sur la période 2013-2022. En pratique, ces données seraient importées depuis une API ou un fichier CSV de la Banque mondiale.
+
+```python
+# Création d'un dictionnaire contenant les données du PIB nominal (en milliards USD)
+# Source : Banque mondiale - Données annuelles du PIB nominal
+donnees_pib = {
+    'Année': list(range(2013, 2023)),  # Création d'une liste d'années de 2013 à 2022
+    
+    # PIB des États-Unis (en milliards USD)
+    'USA': [16843, 17527, 18238, 18745, 19543, 20612, 20953, 23315, 25464, 25462],
+    
+    # PIB de la Chine (en milliards USD)
+    'Chine': [9607, 10482, 11065, 11233, 12310, 13894, 14723, 14687, 17963, 17963],
+    
+    # PIB de l'Allemagne (en milliards USD)
+    'Allemagne': [3753, 3890, 3365, 3477, 3963, 3861, 3846, 4230, 4031, 4072],
+    
+    # PIB du Japon (en milliards USD)
+    'Japon': [5212, 4896, 4389, 4923, 5038, 5082, 5040, 5048, 4912, 4231],
+    
+    # PIB de la France (en milliards USD)
+    'France': [2810, 2853, 2438, 2465, 2778, 2716, 2630, 2938, 2783, 2778],
+    
+    # PIB de l'Inde (en milliards USD)
+    'Inde': [1857, 2039, 2103, 2295, 2713, 2870, 2671, 3150, 3385, 3385]
+}
+
+# Conversion du dictionnaire en DataFrame pandas pour faciliter l'analyse
+df_pib = pd.DataFrame(donnees_pib)
+
+# Définition de la colonne 'Année' comme index du DataFrame
+df_pib.set_index('Année', inplace=True)
+
+# Affichage des premières lignes pour vérifier les données
+print("\n=== Aperçu des données du PIB (en milliards USD) ===")
+print(df_pib.head())
+
+# Affichage des informations générales sur le DataFrame
+print("\n=== Informations sur le DataFrame ===")
+print(df_pib.info())
+```
+
+**Résultat attendu :** Un DataFrame structuré avec les années en index et une colonne par pays.
+
+---
+
+### 3.4 Calcul du PIB par habitant
+
+**Explication :** Le PIB par habitant est un indicateur crucial pour comparer le niveau de vie entre pays. Nous utilisons les données de population pour calculer cet indicateur.
+
+```python
+# Dictionnaire contenant les populations de 2022 (en millions d'habitants)
+# Source : Banque mondiale - Population totale
+population_2022 = {
+    'USA': 333.3,        # Population des États-Unis
+    'Chine': 1412.0,     # Population de la Chine
+    'Allemagne': 83.5,   # Population de l'Allemagne
+    'Japon': 125.1,      # Population du Japon
+    'France': 67.9,      # Population de la France
+    'Inde': 1417.2       # Population de l'Inde
+}
+
+# Calcul du PIB par habitant pour 2022
+# Formule : (PIB en milliards USD × 1000) / Population en millions = PIB par habitant en USD
+pib_par_habitant_2022 = {}
+
+for pays in df_pib.columns:
+    # Extraction du PIB 2022 pour chaque pays (dernière ligne du DataFrame)
+    pib_2022 = df_pib.loc[2022, pays]
+    
+    # Calcul : conversion en millions puis division par la population
+    pib_par_habitant_2022[pays] = (pib_2022 * 1000) / population_2022[pays]
+
+# Création d'un DataFrame pour le PIB par habitant
+df_pib_habitant = pd.DataFrame.from_dict(
+    pib_par_habitant_2022, 
+    orient='index', 
+    columns=['PIB par habitant (USD)']
+)
+
+# Tri par ordre décroissant
+df_pib_habitant = df_pib_habitant.sort_values('PIB par habitant (USD)', ascending=False)
+
+# Affichage des résultats
+print("\n=== PIB par habitant en 2022 ===")
+print(df_pib_habitant)
+```
+
+**Résultat attendu :** Un classement des pays par PIB par habitant, révélant les disparités de richesse individuelle.
+
+---
+
+### 3.5 Calcul des taux de croissance annuels
+
+**Explication :** Le taux de croissance du PIB mesure la variation en pourcentage d'une année à l'autre. C'est un indicateur clé de la dynamique économique.
+
+```python
+# Calcul des taux de croissance annuels pour chaque pays
+# Formule : ((PIB année N - PIB année N-1) / PIB année N-1) × 100
+
+# Création d'un DataFrame vide pour stocker les taux de croissance
+df_croissance = pd.DataFrame(index=df_pib.index[1:])  # On commence à partir de 2014
+
+# Calcul pour chaque pays
+for pays in df_pib.columns:
+    # Utilisation de la fonction pct_change() de pandas
+    # Cette fonction calcule automatiquement le pourcentage de variation
+    df_croissance[pays] = df_pib[pays].pct_change() * 100
+
+# Suppression de la première ligne (NaN car pas de valeur précédente pour 2013)
+df_croissance = df_croissance.dropna()
+
+# Affichage des taux de croissance
+print("\n=== Taux de croissance annuel du PIB (%) ===")
+print(df_croissance.round(2))  # Arrondi à 2 décimales
+
+# Calcul du taux de croissance moyen sur la période
+print("\n=== Taux de croissance moyen 2014-2022 (%) ===")
+croissance_moyenne = df_croissance.mean().sort_values(ascending=False)
+print(croissance_moyenne.round(2))
+```
+
+**Résultat attendu :** Un tableau montrant les variations annuelles et les taux de croissance moyens par pays.
+
+---
+
+### 3.6 Nettoyage et validation des données
+
+**Explication :** Avant l'analyse, il est essentiel de vérifier la qualité des données et de traiter les éventuelles valeurs manquantes ou aberrantes.
+
+```python
+# Vérification des valeurs manquantes
+print("\n=== Vérification des valeurs manquantes ===")
+valeurs_manquantes = df_pib.isnull().sum()
+print(valeurs_manquantes)
+
+# Si des valeurs manquantes existent, afficher un avertissement
+if valeurs_manquantes.sum() > 0:
+    print("⚠ Attention : Des valeurs manquantes ont été détectées")
+else:
+    print("✓ Aucune valeur manquante détectée")
+
+# Vérification des valeurs négatives (incohérentes pour un PIB)
+print("\n=== Vérification des valeurs négatives ===")
+valeurs_negatives = (df_pib < 0).sum()
+print(valeurs_negatives)
+
+if valeurs_negatives.sum() > 0:
+    print("⚠ Attention : Des valeurs négatives ont été détectées")
+else:
+    print("✓ Aucune valeur négative détectée")
+
+# Détection des valeurs aberrantes avec la méthode de l'écart interquartile (IQR)
+print("\n=== Détection des valeurs aberrantes ===")
+
+for pays in df_pib.columns:
+    # Calcul des quartiles
+    Q1 = df_pib[pays].quantile(0.25)  # Premier quartile (25%)
+    Q3 = df_pib[pays].quantile(0.75)  # Troisième quartile (75%)
+    IQR = Q3 - Q1                      # Écart interquartile
+    
+    # Définition des limites pour détecter les outliers
+    limite_inf = Q1 - 1.5 * IQR
+    limite_sup = Q3 + 1.5 * IQR
+    
+    # Détection des valeurs hors limites
+    outliers = df_pib[(df_pib[pays] < limite_inf) | (df_pib[pays] > limite_sup)][pays]
+    
+    if len(outliers) > 0:
+        print(f"{pays}: {len(outliers)} valeur(s) aberrante(s) détectée(s)")
+    else:
+        print(f"{pays}: ✓ Aucune valeur aberrante")
+
+print("\n✓ Validation des données terminée")
+```
+
+**Résultat attendu :** Un rapport de qualité des données confirmant leur fiabilité pour l'analyse.
+
+---
+
+## 4. Analyse Descriptive et Comparative
+
+### 4.1 Statistiques descriptives
+
+```python
+# Calcul des statistiques descriptives pour chaque pays
+print("\n" + "="*70)
+print("STATISTIQUES DESCRIPTIVES DU PIB (2013-2022)")
+print("="*70)
+
+statistiques = df_pib.describe()
+print(statistiques.round(2))
+
+# Calcul de statistiques supplémentaires
+print("\n=== Statistiques complémentaires ===")
+
+# Coefficient de variation (écart-type / moyenne) pour mesurer la volatilité relative
+coef_variation = (df_pib.std() / df_pib.mean() * 100).sort_values(ascending=False)
+print("\nCoefficient de variation (%) :")
+print(coef_variation.round(2))
+
+# Calcul de l'asymétrie (skewness) pour détecter les déviations de la normalité
+asymetrie = df_pib.skew().sort_values(ascending=False)
+print("\nAsymétrie (skewness) :")
+print(asymetrie.round(2))
+```
+
+**Interprétation :**
+- **Moyenne** : Indique le PIB moyen sur la période
+- **Écart-type** : Mesure la variabilité du PIB
+- **Coefficient de variation** : Permet de comparer la volatilité relative entre pays
+- **Asymétrie** : Valeur positive = croissance accélérée, négative = ralentissement
+
+---
+
+### 4.2 Comparaison entre pays
+
+```python
+# Comparaison du PIB en 2013 vs 2022
+print("\n=== Comparaison 2013 vs 2022 ===")
+
+comparaison = pd.DataFrame({
+    'PIB 2013': df_pib.loc[2013],
+    'PIB 2022': df_pib.loc[2022],
+    'Variation absolue': df_pib.loc[2022] - df_pib.loc[2013],
+    'Variation (%)': ((df_pib.loc[2022] - df_pib.loc[2013]) / df_pib.loc[2013] * 100)
+})
+
+# Tri par variation en pourcentage décroissant
+comparaison = comparaison.sort_values('Variation (%)', ascending=False)
+print(comparaison.round(2))
+
+# Identification des leaders et des retardataires
+print("\n=== Analyse des performances ===")
+print(f"Croissance la plus forte : {comparaison['Variation (%)'].idxmax()} "
+      f"({comparaison['Variation (%)'].max():.1f}%)")
+print(f"Croissance la plus faible : {comparaison['Variation (%)'].idxmin()} "
+      f"({comparaison['Variation (%)'].min():.1f}%)")
+```
+
+---
+
+### 4.3 Évolution temporelle du PIB
+
+```python
+# Analyse de la tendance temporelle pour chaque pays
+print("\n=== Analyse des tendances ===")
+
+for pays in df_pib.columns:
+    # Calcul de la pente de la tendance linéaire
+    x = np.arange(len(df_pib))
+    y = df_pib[pays].values
+    
+    # Régression linéaire simple
+    coefficients = np.polyfit(x, y, 1)
+    pente = coefficients[0]
+    
+    print(f"{pays}: Croissance annuelle moyenne de {pente:.2f} milliards USD/an")
+```
+
+---
+
+### 4.4 Analyse des taux de croissance
+
+```python
+# Statistiques sur les taux de croissance
+print("\n=== Statistiques des taux de croissance ===")
+print(df_croissance.describe().round(2))
+
+# Identification des années de croissance et de récession
+print("\n=== Années de récession (croissance négative) ===")
+
+for pays in df_croissance.columns:
+    annees_recession = df_croissance[df_croissance[pays] < 0].index.tolist()
+    if annees_recession:
+        print(f"{pays}: {annees_recession}")
+    else:
+        print(f"{pays}: Aucune récession sur la période")
+
+# Analyse de la volatilité de la croissance
+print("\n=== Volatilité de la croissance (écart-type) ===")
+volatilite = df_croissance.std().sort_values(ascending=False)
+print(volatilite.round(2))
+```
+
+---
+
+### 4.5 Classement des pays
+
+```python
+# Classement des pays par différents critères en 2022
+print("\n=== Classements 2022 ===")
+
+# 1. Par PIB total
+print("\n1. Classement par PIB total :")
+classement_pib = df_pib.loc[2022].sort_values(ascending=False)
+for i, (pays, valeur) in enumerate(classement_pib.items(), 1):
+    print(f"  {i}. {pays}: {valeur:,.0f} Mds USD")
+
+# 2. Par PIB par habitant
+print("\n2. Classement par PIB par habitant :")
+for i, (pays, valeur) in enumerate(df_pib_habitant.values, 1):
+    print(f"  {i}. {df_pib_habitant.index[i-1]}: {valeur[0]:,.0f} USD")
+
+# 3. Par croissance moyenne
+print("\n3. Classement par taux de croissance moyen (2014-2022) :")
+for i, (pays, valeur) in enumerate(croissance_moyenne.items(), 1):
+    print(f"  {i}. {pays}: {valeur:.2f}%")
+```
+
+---
+
+### 4.6 Corrélations et tendances
+
+```python
+# Calcul de la matrice de corrélation entre les PIB des différents pays
+print("\n=== Matrice de corrélation entre les PIB ===")
+matrice_correlation = df_pib.corr()
+print(matrice_correlation.round(2))
+
+# Identification des corrélations les plus fortes
+print("\n=== Paires de pays avec corrélation > 0.9 ===")
+
+for i in range(len(matrice_correlation.columns)):
+    for j in range(i+1, len(matrice_correlation.columns)):
+        pays1 = matrice_correlation.columns[i]
+        pays2 = matrice_correlation.columns[j]
+        correlation = matrice_correlation.iloc[i, j]
+        
+        if abs(correlation) > 0.9:
+            print(f"{pays1} - {pays2}: {correlation:.3f}")
+
+# Analyse de la convergence/divergence
+print("\n=== Analyse de la convergence économique ===")
+
+# Calcul de l'écart-type des PIB par habitant pour mesurer la convergence
+# (écart-type décroissant = convergence, croissant = divergence)
+ecarts_pib_habitant = []
+
+for annee in df_pib.index:
+    pib_par_hab_annee = {}
+    for pays in df_pib.columns:
+        pib_par_hab_annee[pays] = (df_pib.loc[annee, pays] * 1000) / population_2022[pays]
+    
+    ecarts_pib_habitant.append(np.std(list(pib_par_hab_annee.values())))
+
+if ecarts_pib_habitant[-1] > ecarts_pib_habitant[0]:
+    print("→ Divergence : Les écarts de richesse entre pays augmentent")
+else:
+    print("→ Convergence : Les écarts de richesse entre pays diminuent")
+
+print(f"Écart-type 2013: {ecarts_pib_habitant[0]:,.0f} USD")
+print(f"Écart-type 2022: {ecarts_pib_habitant[-1]:,.0f} USD")
+```
+
+---
+
+## 5. Visualisations Graphiques
+
+### 5.1 Graphique linéaire : Évolution du PIB au fil du temps
+
+```python
+# Création du graphique d'évolution temporelle
+plt.figure(figsize=(14, 7))
+
+# Tracé d'une ligne pour chaque pays
+for pays in df_pib.columns:
+    plt.plot(df_pib.index, df_pib[pays], marker='o', linewidth=2, label=pays)
+
+# Configuration du graphique
+plt.title('Évolution du PIB nominal (2013-2022)', fontsize=16, fontweight='bold', pad=20)
+plt.xlabel('Année', fontsize=12, fontweight='bold')
+plt.ylabel('PIB (milliards USD)', fontsize=12, fontweight='bold')
+plt.legend(loc='upper left', fontsize=10, frameon=True, shadow=True)
+plt.grid(True, alpha=0.3, linestyle='--')
+
+# Ajout d'une annotation pour l'impact COVID-19
+plt.axvspan(2020, 2021, alpha=0.2, color='red', label='Période COVID-19')
+plt.text(2020.5, df_pib.max().max() * 0.95, 'Impact COVID-19', 
+         fontsize=10, ha='center', style='italic')
+
+# Format des axes
+ax = plt.gca()
+ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:,.0f}'))
+
+plt.tight_layout()
+plt.show()
+
+print("✓ Graphique 1 : Évolution du PIB généré")
+```
+
+**Interprétation attendue :** Ce graphique révèle les trajectoires de croissance distinctes entre économies développées (croissance modérée) et émergentes (croissance rapide).
+
+---
+
+### 5.2 Graphique en barres : Comparaison du PIB entre pays (2022)
+
+```python
+# Création du graphique en barres pour 2022
+plt.figure(figsize=(12, 7))
+
+# Données pour 2022 triées par ordre décroissant
+pib_2022 = df_pib.loc[2022].sort_values(ascending=False)
+
+# Création des barres avec un dégradé de couleurs
+colors = plt.cm.viridis(np.linspace(0.3, 0.9, len(pib_2022)))
+bars = plt.bar(pib_2022.index, pib_2022.values, color=colors, edgecolor='black', linewidth=1.2)
+
+# Ajout des valeurs au-dessus des barres
+for i, (pays, valeur) in enumerate(pib_2022.items()):
+    plt.text(i, valeur + 500, f'{valeur:,.0f}', ha='center', va='bottom', 
+             fontsize=10, fontweight='bold')
+
+# Configuration du graphique
+plt.title('Comparaison du PIB nominal en 2022', fontsize=16, fontweight='bold', pad=20)
+plt.xlabel('Pays', fontsize=12, fontweight='bold')
+plt.ylabel('PIB (milliards USD)', fontsize=12, fontweight='bold')
+plt.grid(axis='y', alpha=0.3, linestyle='--')
+
+# Format de l'axe Y
+ax = plt.gca()
+ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:,.0f}'))
+
+plt.tight_layout()
+plt.show()
+
+print("✓ Graphique 2 : Comparaison du PIB 2022 générée")
+```
+
+---
+
+### 5.3 Graphique en barres : PIB par habitant (2022)
+
+```python
+# Création du graphique pour le PIB par habitant
+plt.figure(figsize=(12, 7))
+
+# Tri par ordre décroissant
+pib_hab_trie = df_pib_habitant.sort_values('PIB par habitant (USD)', ascending=False)
+
+# Création des barres avec des couleurs différenciant développés vs émergents
+couleurs = ['#2E86AB' if x > 30000 else '#A23B72' for x in pib_hab_trie['PIB par habitant (USD)']]
+bars = plt.bar(pib_hab_trie.index, pib_hab_trie['PIB par habitant (USD)'], 
+               color=couleurs, edgecolor='black', linewidth=1.2)
+
+# Ajout des valeurs sur les barres
+for i, (pays, valeur) in enumerate(pib_hab_trie['PIB par habitant (USD)'].items()):
+    plt.text(i, valeur + 2000, f'{valeur:,.0f}$', ha='center', va='bottom', 
+             fontsize=10, fontweight='bold')
+
+# Ligne de référence à 30 000 USD (seuil pays développé)
+plt.axhline(y=30000, color='red', linestyle='--', linewidth=2, alpha=0.7, 
+            label='Seuil pays développé (~30k USD)')
+
+# Configuration du graphique
+plt.title('PIB par habitant en 2022', fontsize=16, fontweight='bold', pad=20)
+plt.xlabel('Pays', fontsize=12, fontweight='bold')
+plt.ylabel('PIB par habitant (USD)', fontsize=12, fontweight='bold')
+plt.legend(loc='upper right', fontsize=10)
+plt.grid(axis='y', alpha=0.3, linestyle='--')
+
+# Format de l'axe Y
+ax = plt.gca()
+ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:,.0f}'))
+
+plt.tight_layout()
+plt.show()
+
+print("✓ Graphique 3 : PIB par habitant généré")
+```
+
+---
+
+### 5.4 Graphique de croissance : Taux de croissance annuel moyen
+
+```python
+# Graphique des taux de croissance moyens
+plt.figure(figsize=(12, 7))
+
+# Tri par ordre décroissant
+croissance_triee = croissance_moyenne.sort_values(ascending=True)
+
+# Création d'un graphique en barres horizontales
+couleurs_croissance = ['green' if x > 0 else 'red' for x in croissance_triee]
+bars = plt.barh(croissance_triee.index, croissance_triee.values, 
+                color=couleurs_croissance, edgecolor='black', linewidth=1.2, alpha=0.7)
+
+# Ajout des valeurs à côté des barres
+for i, (pays, valeur) in enumerate(croissance_triee.items()):
+    plt.text(valeur + 0.2, i, f'{valeur:.2f}%', va='center', fontsize=10, fontweight='bold')
+
+# Ligne de référence à 0%
+plt.axvline(x=0, color='black', linewidth=1.5)
+
+# Configuration du graphique
+plt.title('Taux de croissance annuel moyen du PIB (2014-2022)', 
+          fontsize=16, fontweight='bold', pad=
