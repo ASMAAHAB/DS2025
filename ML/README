@@ -1,1 +1,121 @@
+Ce rapport présente une analyse descriptive complète des données provenant du Wine Quality Dataset, un ensemble de données largement utilisé dans la recherche et l’apprentissage automatique. Il contient des mesures physico-chimiques de vins portugais de la région Vinho Verde ainsi que leur note de qualité attribuée par des œnologues professionnels.
 
+Les trois fichiers fournis permettent d'analyser deux types de vins :
+
+Vin rouge (1599 observations)
+
+Vin blanc (4898 observations)
+
+Le fichier winequality.names donne la définition de chaque variable.
+
+🧪 2. Description des variables
+
+Les caractéristiques physico-chimiques mesurées pour chaque échantillon sont les suivantes :
+
+Fixed acidity
+Acides non volatils (principalement acide tartrique). Contribuent à la structure du vin.
+
+Volatile acidity
+Quantité d'acide acétique. Trop élevée → goût de vinaigre.
+
+Citric acid
+Apporte fraîcheur et stabilité gustative.
+
+Residual sugar
+Quantité de sucre restant après fermentation. Taux élevé → vin doux.
+
+Chlorides
+Quantité de sel dans le vin.
+
+Free sulfur dioxide
+Forme active du SO₂ → empêche l’oxydation.
+
+Total sulfur dioxide
+SO₂ total (libre + lié). Trop → goût sulfuré.
+
+Density
+Dépend du sucre, de l’alcool et d’autres composants.
+
+pH
+Acidité globale. Faible pH → vin acide.
+
+Sulphates
+Agents conservateurs contribuant à la qualité.
+
+Alcohol
+Titre alcoométrique volumique.
+
+Quality
+Note sensorielle comprise entre 0 et 10.
+
+🔴 3. Analyse descriptive — Vin Rouge
+
+Le fichier winequality-red.csv contient 1599 vins rouges analysés.
+
+3.1. Statistiques principales
+Variable	Moyenne	Min	Max
+Fixed acidity	8.32	4.6	15.9
+Volatile acidity	0.53	0.12	1.58
+Citric acid	0.27	0.00	1.00
+Residual sugar	2.54	0.9	15.5
+Chlorides	0.087	0.012	0.611
+Free SO₂	15.87	1	72
+Total SO₂	46.47	6	289
+Density	0.9967	0.9901	1.0037
+pH	3.31	2.74	4.01
+Sulphates	0.66	0.33	2.00
+Alcohol	10.42%	8.4	14.9
+Quality	5.64 / 10	3	8
+3.2. Observations importantes
+
+Les vins rouges ont une acidité volatile relativement élevée, ce qui peut affecter la qualité.
+
+Le niveau de sucre résiduel est très faible : ce sont des vins secs.
+
+Le soufre total est modéré.
+
+L’alcool varie principalement entre 9 % et 12 %.
+
+La qualité est concentrée entre 5 et 6, ce qui montre une faible variabilité.
+
+⚪ 4. Analyse descriptive — Vin Blanc
+
+Le fichier winequality-white.csv contient 4898 vins blancs.
+
+4.1. Statistiques principales
+Variable	Moyenne	Min	Max
+Fixed acidity	6.85	3.8	14.2
+Volatile acidity	0.28	0.08	1.10
+Citric acid	0.33	0.00	1.66
+Residual sugar	6.39	0.6	65.8
+Chlorides	0.046	0.009	0.346
+Free SO₂	35.31	2	289
+Total SO₂	138.36	9	440
+Density	0.9940	0.987	1.039
+pH	3.19	2.72	3.82
+Sulphates	0.49	0.22	1.08
+Alcohol	10.51%	8.0	14.2
+Quality	5.88 / 10	3	9
+4.2. Observations importantes
+
+Le vin blanc contient beaucoup plus de sucre résiduel, parfois jusqu’à 65 g/L.
+
+Le SO₂ total est beaucoup plus élevé que dans les vins rouges → forte protection contre l’oxydation.
+
+L’acidité volatile est plus faible → arômes plus propres.
+
+La distribution de la qualité est plus large : de 3 à 9.
+
+⚖️ 5. Comparaison générale : Vin Rouge vs Vin Blanc
+Caractéristique	Rouge	Blanc	Conclusion
+Quantité d’échantillons	1599	4898	Plus de vins blancs analysés
+Qualité moyenne	5.64	5.88	Vin blanc légèrement mieux noté
+Sucre résiduel	Très faible	Élevé	Rouge = sec, Blanc = plus doux
+Acidité volatile	Haute	Basse	Rouge plus sensible au goût vinaigré
+SO₂ total	46	138	Blanc beaucoup plus stabilisé
+Alcool	10.42	10.51	Similaire
+pH	3.31	3.19	Vin blanc plus acide
+Conclusion comparative :
+
+➡️ Les vins blancs sont plus variés, plus sucrés et légèrement mieux notés.
+➡️ Les vins rouges ont une acidité plus volatile, ce qui réduit parfois la qualité.
